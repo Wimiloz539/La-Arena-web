@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>LA ARENA — Tier List PvP</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#14120f; --surface:#1e1b17; --surface-2:#26221d; --line:#38332b;
+    --bone:#ede6da; --muted:#9c948a; --ember:#c1442d; --steel:#5b87a6; --gold:#c9a227;
+  }
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{ background:var(--bg); color:var(--bone); font-family:'Inter',sans-serif; }
+  .wrap{ max-width:900px; margin:0 auto; padding:28px 20px 80px; }
+  .bill{
+    border:1px solid var(--line); border-radius:6px; padding:22px 24px;
+    background:linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
+    position:relative; overflow:hidden; margin-bottom:22px;
+  }
+  .bill::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:3px;
+    background:repeating-linear-gradient(90deg, var(--ember) 0 14px, transparent 14px 22px);
+  }
+  .bill h1{ font-family:'Oswald',sans-serif; font-weight:700; letter-spacing:3px; font-size:34px; margin:0 0 2px; text-transform:uppercase; }
+  .bill h1 span{ color:var(--ember); }
+  .bill p{ margin:0; color:var(--muted); font-size:13.5px; }
+  .tabs{ display:flex; gap:2px; flex-wrap:wrap; border-bottom:1px solid var(--line); margin-bottom:18px; }
+  .tab{
+    font-family:'Oswald',sans-serif; letter-spacing:1.5px; text-transform:uppercase; font-size:13px;
+    padding:10px 16px; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; user-select:none;
+  }
+  .tab:hover{ color:var(--bone); }
+  .tab.active{ color:var(--bone); border-bottom-color:var(--ember); }
+  .card{ border:1px solid var(--line); background:var(--surface); border-radius:6px; padding:18px; margin-bottom:14px; }
+  table{ width:100%; border-collapse:collapse; }
+  th{ text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); padding:8px 10px; border-bottom:1px solid var(--line); }
+  td{ padding:10px; border-bottom:1px solid var(--line); font-size:14px; }
+  .rank{ color:var(--muted); font-family:'IBM Plex Mono',monospace; width:34px; }
+  .tier-badge{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; padding:3px 8px; border-radius:3px;
+    background:var(--surface-2); border:1px solid var(--line); color:var(--gold); white-space:nowrap;
+  }
+  .muted{ color:var(--muted); font-size:13px; }
+  .empty{ text-align:center; padding:30px 10px; color:var(--muted); font-size:13.5px; }
+  .hint{ font-size:12px; color:var(--muted); margin-top:10px; line-height:1.6; }
+  .hint code{ background:var(--surface-2); padding:1px 6px; border-radius:3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bill">
+    <h1>LA <span>ARENA</span></h1>
+    <p>Tier list de PvP, testeada por gente real vía Discord.</p>
+  </div>
+  <div class="tabs" id="tabs"></div>
+  <div class="card" id="content">
+    <div class="empty">Cargando...</div>
+  </div>
+  <p class="hint">
+    ¿Querés testear tu tier? En el servidor de Discord usá <code>/testear</code> y elegí la modalidad.
+    Un tester activo va a aceptar tu solicitud; cuando terminen el duelo, el tester reporta el resultado
+    con <code>/reportar</code> y vos lo confirmás. La tier se actualiza sola acá.
+  </p>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+
+  // Pegá acá la config de tu proyecto de Firebase (Configuración del proyecto -> General -> Tus apps -> Config)
+  const firebaseConfig = {
+    apiKey: "AIzaSyD0W4R9uaMLBDGTvNv7wRY1BRQquLQ43BA",
+    authDomain: "la-arena-tierlist.firebaseapp.com",
+    databaseURL: "https://la-arena-tierlist-default-rtdb.firebaseio.com/",
+    projectId: "la-arena-tierlist",
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  const MODALITIES = ['Crystal','Pot','UHC','Sword','Axe','Mazo','SMP'];
+  let activeModality = MODALITIES[0];
+  let players = {};
+
+  function renderTabs(){
+    document.getElementById('tabs').innerHTML = MODALITIES.map(m =>
+      `<div class="tab ${activeModality===m?'active':''}" data-mod="${m}">${m}</div>`
+    ).join('');
+    document.querySelectorAll('.tab').forEach(el => {
+      el.addEventListener('click', () => { activeModality = el.dataset.mod; renderTabs(); renderContent(); });
+    });
+  }
+
+  function renderContent(){
+    const rows = Object.entries(players)
+      .filter(([id, p]) => p.tiers && p.tiers[activeModality])
+      .sort((a, b) => a[1].tiers[activeModality].index - b[1].tiers[activeModality].index);
+
+    const el = document.getElementById('content');
+    if(!rows.length){
+      el.innerHTML = `<div class="empty">Todavía nadie fue testeado en ${activeModality}. Pedilo con /testear en Discord.</div>`;
+      return;
+    }
+    el.innerHTML = `
+      <table>
+        <thead><tr><th></th><th>Jugador</th><th>Tier</th><th>Testeado por</th></tr></thead>
+        <tbody>
+          ${rows.map(([id, p], i) => {
+            const t = p.tiers[activeModality];
+            return `<tr>
+              <td class="rank">#${i+1}</td>
+              <td>${escapeHtml(p.username || id)}</td>
+              <td><span class="tier-badge">${escapeHtml(t.label)}</span></td>
+              <td class="muted">${escapeHtml(t.testedBy || '—')}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  renderTabs();
+  onValue(ref(db, 'players'), (snap) => {
+    players = snap.val() || {};
+    renderContent();
+  }, (err) => {
+    document.getElementById('content').innerHTML = `<div class="empty">No se pudo conectar a la base de datos. Revisá el firebaseConfig y las reglas de la base.</div>`;
+    console.error(err);
+  });
+</script>
+</body>
+</html>
