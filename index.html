@@ -40,6 +40,15 @@
   th{ text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); padding:8px 10px; border-bottom:1px solid var(--line); }
   td{ padding:10px; border-bottom:1px solid var(--line); font-size:14px; }
   .rank{ color:var(--muted); font-family:'IBM Plex Mono',monospace; width:34px; }
+  .num{ text-align:right; font-family:'IBM Plex Mono',monospace; }
+  tr.retired td{ color:var(--muted); }
+  tr.retired .tier-badge{ color:var(--muted); }
+  .profile-row{ cursor:pointer; }
+  .profile-row:hover{ background:var(--surface-2); }
+  .profile-detail{ background:var(--bg); }
+  .profile-detail td{ padding:12px 16px; }
+  .profile-detail table{ width:100%; }
+  .profile-detail th, .profile-detail td{ font-size:12.5px; padding:6px 8px; }
   .tier-badge{
     font-family:'IBM Plex Mono',monospace; font-size:12px; padding:3px 8px; border-radius:3px;
     background:var(--surface-2); border:1px solid var(--line); color:var(--gold); white-space:nowrap;
@@ -83,36 +92,126 @@
   const db = getDatabase(app);
 
   const MODALITIES = ['Crystal','Pot','UHC','Sword','Axe','Mazo','SMP'];
-  let activeModality = MODALITIES[0];
+  const TABS = ['OVERALL', ...MODALITIES];
+  let activeTab = 'OVERALL';
   let players = {};
+  let ladders = {};
+  let retired = {}; // retired[modality][playerId] = {username, points, retiredAt, ...}
+  let expandedPlayer = null;
 
   function renderTabs(){
-    document.getElementById('tabs').innerHTML = MODALITIES.map(m =>
-      `<div class="tab ${activeModality===m?'active':''}" data-mod="${m}">${m}</div>`
+    document.getElementById('tabs').innerHTML = TABS.map(m =>
+      `<div class="tab ${activeTab===m?'active':''}" data-mod="${m}">${m}</div>`
     ).join('');
     document.querySelectorAll('.tab').forEach(el => {
-      el.addEventListener('click', () => { activeModality = el.dataset.mod; renderTabs(); renderContent(); });
+      el.addEventListener('click', () => { activeTab = el.dataset.mod; expandedPlayer = null; renderTabs(); renderContent(); });
     });
   }
 
+  function playerModalityBreakdown(id){
+    return MODALITIES.map(m => {
+      const ladder = ladders[m] || [];
+      const pos = ladder.indexOf(id);
+      if(pos !== -1) return { modality: m, points: ladder.length - pos, isRetired: false, extra: `#${pos+1} de ${ladder.length}` };
+      const r = retired[m] && retired[m][id];
+      if(r) return { modality: m, points: r.points, isRetired: true, extra: 'retirado/a' };
+      return null;
+    }).filter(Boolean);
+  }
+
+  function computeOverall(){
+    const totals = {};
+    MODALITIES.forEach(m => {
+      const ladder = ladders[m] || [];
+      ladder.forEach((id, i) => { totals[id] = (totals[id] || 0) + (ladder.length - i); });
+      const r = retired[m] || {};
+      Object.entries(r).forEach(([id, data]) => { totals[id] = (totals[id] || 0) + data.points; });
+    });
+    return Object.entries(totals).sort((a, b) => b[1] - a[1]);
+  }
+
   function renderContent(){
-    const ladder = ladders[activeModality] || [];
     const el = document.getElementById('content');
-    if(!ladder.length){
-      el.innerHTML = `<div class="empty">Todavía nadie se sumó a la escalera de ${activeModality}. Usá /unirme en Discord.</div>`;
+
+    if(activeTab === 'OVERALL'){
+      const rows = computeOverall();
+      if(!rows.length){
+        el.innerHTML = `<div class="empty">Todavía no hay puntos. Sumate a alguna escalera con /unirme en Discord.</div>`;
+        return;
+      }
+      el.innerHTML = `
+        <table>
+          <thead><tr><th></th><th>Jugador</th><th class="num">Puntos</th></tr></thead>
+          <tbody>
+            ${rows.map(([id, pts], i) => {
+              const detail = expandedPlayer === id ? `
+                <tr class="profile-detail"><td colspan="3">
+                  <table>
+                    <thead><tr><th>Modalidad</th><th class="num">Puntos</th><th>Estado</th></tr></thead>
+                    <tbody>
+                      ${playerModalityBreakdown(id).map(b => `
+                        <tr class="${b.isRetired ? 'retired' : ''}">
+                          <td>${escapeHtml(b.modality)}</td>
+                          <td class="num">${b.points}</td>
+                          <td class="muted">${escapeHtml(b.extra)}</td>
+                        </tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
+                </td></tr>
+              ` : '';
+              return `<tr class="profile-row" data-player="${id}">
+                <td class="rank">#${i+1}</td>
+                <td>${escapeHtml((players[id] && players[id].username) || id)}</td>
+                <td class="num">${pts}</td>
+              </tr>${detail}`;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+      document.querySelectorAll('.profile-row').forEach(row => {
+        row.addEventListener('click', () => {
+          const id = row.dataset.player;
+          expandedPlayer = expandedPlayer === id ? null : id;
+          renderContent();
+        });
+      });
       return;
     }
-    el.innerHTML = `
-      <table>
-        <thead><tr><th></th><th>Jugador</th></tr></thead>
-        <tbody>
-          ${ladder.map((id, i) => `<tr>
-            <td class="rank">#${i+1}</td>
-            <td>${escapeHtml((players[id] && players[id].username) || id)}</td>
-          </tr>`).join('')}
-        </tbody>
-      </table>
-    `;
+
+    const ladder = ladders[activeTab] || [];
+    const retiredHere = retired[activeTab] || {};
+    const retiredList = Object.values(retiredHere);
+    let html = '';
+    if(!ladder.length){
+      html += `<div class="empty">Todavía nadie se sumó a la escalera de ${activeTab}. Usá /unirme en Discord.</div>`;
+    } else {
+      html += `
+        <table>
+          <thead><tr><th></th><th>Jugador</th></tr></thead>
+          <tbody>
+            ${ladder.map((id, i) => `<tr>
+              <td class="rank">#${i+1}</td>
+              <td>${escapeHtml((players[id] && players[id].username) || id)}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+    if(retiredList.length){
+      html += `
+        <p class="muted" style="margin:16px 0 6px; text-transform:uppercase; letter-spacing:1px; font-size:11.5px;">🏅 Retirados de esta modalidad</p>
+        <table>
+          <tbody>
+            ${retiredList.map(r => `<tr class="retired">
+              <td>${escapeHtml(r.username)}</td>
+              <td class="num">${r.points} pts</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+    el.innerHTML = html;
   }
 
   function escapeHtml(s){
@@ -120,13 +219,12 @@
   }
 
   renderTabs();
-  let players = {};
-  let ladders = {};
   onValue(ref(db, 'players'), (snap) => { players = snap.val() || {}; renderContent(); });
   onValue(ref(db, 'ladders'), (snap) => { ladders = snap.val() || {}; renderContent(); }, (err) => {
     document.getElementById('content').innerHTML = `<div class="empty">No se pudo conectar a la base de datos. Revisá el firebaseConfig y las reglas de la base.</div>`;
     console.error(err);
   });
+  onValue(ref(db, 'retired'), (snap) => { retired = snap.val() || {}; renderContent(); });
 </script>
 </body>
 </html>
