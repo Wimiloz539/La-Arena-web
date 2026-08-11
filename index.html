@@ -61,9 +61,9 @@
     <div class="empty">Cargando...</div>
   </div>
   <p class="hint">
-    ¿Querés testear tu tier? En el servidor de Discord usá <code>/testear</code> y elegí la modalidad.
-    Un tester activo va a aceptar tu solicitud; cuando terminen el duelo, el tester reporta el resultado
-    con <code>/reportar</code> y vos lo confirmás. La tier se actualiza sola acá.
+    ¿Querés subir de puesto? En el servidor de Discord usá <code>/unirme</code> para sumarte a una escalera,
+    y <code>/desafiar</code> para retar a quien está justo arriba tuyo. Si le ganás, cambian de lugar.
+    Si no acepta en 14 días, pierde el puesto igual.
   </p>
 </div>
 
@@ -96,28 +96,20 @@
   }
 
   function renderContent(){
-    const rows = Object.entries(players)
-      .filter(([id, p]) => p.tiers && p.tiers[activeModality])
-      .sort((a, b) => a[1].tiers[activeModality].index - b[1].tiers[activeModality].index);
-
+    const ladder = ladders[activeModality] || [];
     const el = document.getElementById('content');
-    if(!rows.length){
-      el.innerHTML = `<div class="empty">Todavía nadie fue testeado en ${activeModality}. Pedilo con /testear en Discord.</div>`;
+    if(!ladder.length){
+      el.innerHTML = `<div class="empty">Todavía nadie se sumó a la escalera de ${activeModality}. Usá /unirme en Discord.</div>`;
       return;
     }
     el.innerHTML = `
       <table>
-        <thead><tr><th></th><th>Jugador</th><th>Tier</th><th>Testeado por</th></tr></thead>
+        <thead><tr><th></th><th>Jugador</th></tr></thead>
         <tbody>
-          ${rows.map(([id, p], i) => {
-            const t = p.tiers[activeModality];
-            return `<tr>
-              <td class="rank">#${i+1}</td>
-              <td>${escapeHtml(p.username || id)}</td>
-              <td><span class="tier-badge">${escapeHtml(t.label)}</span></td>
-              <td class="muted">${escapeHtml(t.testedBy || '—')}</td>
-            </tr>`;
-          }).join('')}
+          ${ladder.map((id, i) => `<tr>
+            <td class="rank">#${i+1}</td>
+            <td>${escapeHtml((players[id] && players[id].username) || id)}</td>
+          </tr>`).join('')}
         </tbody>
       </table>
     `;
@@ -128,10 +120,10 @@
   }
 
   renderTabs();
-  onValue(ref(db, 'players'), (snap) => {
-    players = snap.val() || {};
-    renderContent();
-  }, (err) => {
+  let players = {};
+  let ladders = {};
+  onValue(ref(db, 'players'), (snap) => { players = snap.val() || {}; renderContent(); });
+  onValue(ref(db, 'ladders'), (snap) => { ladders = snap.val() || {}; renderContent(); }, (err) => {
     document.getElementById('content').innerHTML = `<div class="empty">No se pudo conectar a la base de datos. Revisá el firebaseConfig y las reglas de la base.</div>`;
     console.error(err);
   });
