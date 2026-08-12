@@ -108,9 +108,18 @@
     });
   }
 
+  // Helper para asegurarnos de que el ladder siempre sea un Array limpio
+  function getLadderArray(modality) {
+    const raw = ladders[modality];
+    if (!raw) return [];
+    if (Array.isArray(raw)) return raw.filter(Boolean);
+    if (typeof raw === 'object') return Object.values(raw).filter(Boolean);
+    return [];
+  }
+
   function playerModalityBreakdown(id){
     return MODALITIES.map(m => {
-      const ladder = ladders[m] || [];
+      const ladder = getLadderArray(m);
       const pos = ladder.indexOf(id);
       if(pos !== -1) return { modality: m, points: ladder.length - pos, isRetired: false, extra: `#${pos+1} de ${ladder.length}` };
       const r = retired[m] && retired[m][id];
@@ -122,14 +131,14 @@
   function computeOverall(){
     const totals = {};
     MODALITIES.forEach(m => {
-      const ladder = ladders[m] || [];
+      const ladder = getLadderArray(m);
       ladder.forEach((id, i) => { totals[id] = (totals[id] || 0) + (ladder.length - i); });
       const r = retired[m] || {};
       Object.entries(r).forEach(([id, data]) => { totals[id] = (totals[id] || 0) + data.points; });
     });
     return Object.entries(totals).sort((a, b) => b[1] - a[1]);
   }
-
+  
   function renderContent(){
     const el = document.getElementById('content');
 
@@ -179,7 +188,7 @@
       return;
     }
 
-    const ladder = ladders[activeTab] || [];
+    const ladder = getLadderArray(activeTab);
     const retiredHere = retired[activeTab] || {};
     const retiredList = Object.values(retiredHere);
     let html = '';
