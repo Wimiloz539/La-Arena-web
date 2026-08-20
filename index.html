@@ -15,64 +15,97 @@
   *{ box-sizing:border-box; }
   html,body{ margin:0; padding:0; }
   body{ background:var(--bg); color:var(--bone); font-family:'Inter',sans-serif; }
-  .wrap{ max-width:900px; margin:0 auto; padding:28px 20px 80px; }
-  .bill{
-    border:1px solid var(--line); border-radius:6px; padding:22px 24px;
-    background:linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%);
-    position:relative; overflow:hidden; margin-bottom:22px;
+  .wrap{ max-width:980px; margin:0 auto; padding:24px 18px 80px; }
+
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+    border:1px solid var(--line); border-radius:8px; padding:14px 18px; margin-bottom:20px;
+    background:linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%); position:relative; overflow:hidden;
   }
-  .bill::before{
+  .topbar::before{
     content:""; position:absolute; top:0; left:0; right:0; height:3px;
     background:repeating-linear-gradient(90deg, var(--ember) 0 14px, transparent 14px 22px);
   }
-  .bill h1{ font-family:'Oswald',sans-serif; font-weight:700; letter-spacing:3px; font-size:34px; margin:0 0 2px; text-transform:uppercase; }
-  .bill h1 span{ color:var(--ember); }
-  .bill p{ margin:0; color:var(--muted); font-size:13.5px; }
-  .tabs{ display:flex; gap:2px; flex-wrap:wrap; border-bottom:1px solid var(--line); margin-bottom:18px; }
+  .logo{ font-family:'Oswald',sans-serif; font-weight:700; letter-spacing:3px; font-size:22px; text-transform:uppercase; white-space:nowrap; }
+  .logo span{ color:var(--ember); }
+  .search{
+    flex:1; min-width:160px; max-width:280px; background:var(--bg); border:1px solid var(--line); border-radius:6px;
+    padding:9px 12px; color:var(--bone); font-family:'Inter',sans-serif; font-size:13.5px;
+  }
+  .search::placeholder{ color:var(--muted); }
+
+  .tabs{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:20px; }
   .tab{
-    font-family:'Oswald',sans-serif; letter-spacing:1.5px; text-transform:uppercase; font-size:13px;
-    padding:10px 16px; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; user-select:none;
+    font-family:'Oswald',sans-serif; letter-spacing:1px; text-transform:uppercase; font-size:12.5px;
+    padding:9px 14px; color:var(--muted); cursor:pointer; border:1px solid var(--line); border-radius:6px;
+    background:var(--surface); user-select:none;
   }
-  .tab:hover{ color:var(--bone); }
-  .tab.active{ color:var(--bone); border-bottom-color:var(--ember); }
-  .card{ border:1px solid var(--line); background:var(--surface); border-radius:6px; padding:18px; margin-bottom:14px; }
-  table{ width:100%; border-collapse:collapse; }
-  th{ text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); padding:8px 10px; border-bottom:1px solid var(--line); }
-  td{ padding:10px; border-bottom:1px solid var(--line); font-size:14px; }
-  .rank{ color:var(--muted); font-family:'IBM Plex Mono',monospace; width:34px; }
-  .num{ text-align:right; font-family:'IBM Plex Mono',monospace; }
-  tr.retired td{ color:var(--muted); }
-  tr.retired .tier-badge{ color:var(--muted); }
-  .profile-row{ cursor:pointer; }
-  .profile-row:hover{ background:var(--surface-2); }
-  .profile-detail{ background:var(--bg); }
-  .profile-detail td{ padding:12px 16px; }
-  .profile-detail table{ width:100%; }
-  .profile-detail th, .profile-detail td{ font-size:12.5px; padding:6px 8px; }
-  .tier-badge{
-    font-family:'IBM Plex Mono',monospace; font-size:12px; padding:3px 8px; border-radius:3px;
-    background:var(--surface-2); border:1px solid var(--line); color:var(--gold); white-space:nowrap;
+  .tab:hover{ color:var(--bone); border-color:var(--steel); }
+  .tab.active{ color:var(--bg); background:var(--ember); border-color:var(--ember); }
+
+  .podium{ display:flex; align-items:flex-end; justify-content:center; gap:14px; margin-bottom:24px; }
+  .podium-card{
+    border:1px solid var(--line); border-radius:8px; background:var(--surface); text-align:center;
+    padding:16px 14px; width:150px; position:relative;
   }
-  .muted{ color:var(--muted); font-size:13px; }
-  .empty{ text-align:center; padding:30px 10px; color:var(--muted); font-size:13.5px; }
-  .hint{ font-size:12px; color:var(--muted); margin-top:10px; line-height:1.6; }
+  .podium-card.p1{ border-color:var(--gold); box-shadow:0 0 22px -6px var(--gold); padding-top:22px; width:170px; order:2; }
+  .podium-card.p2{ order:1; }
+  .podium-card.p3{ order:3; }
+  .podium-card img{ width:56px; height:56px; border-radius:8px; image-rendering:pixelated; border:1px solid var(--line); }
+  .podium-card.p1 img{ width:74px; height:74px; }
+  .podium-name{ font-family:'Oswald',sans-serif; font-size:14px; margin-top:10px; letter-spacing:.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .podium-card.p1 .podium-name{ color:var(--gold); font-size:16px; }
+  .podium-rank{ font-family:'IBM Plex Mono',monospace; font-size:24px; color:var(--muted); margin-top:6px; }
+  .podium-card.p1 .podium-rank{ color:var(--gold); font-size:30px; }
+  .podium-pts{ font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); margin-top:2px; }
+
+  .card{ border:1px solid var(--line); background:var(--surface); border-radius:8px; overflow:hidden; margin-bottom:14px; }
+  .row{
+    display:flex; align-items:center; gap:12px; padding:10px 14px; border-bottom:1px solid var(--line);
+  }
+  .row:last-child{ border-bottom:none; }
+  .row:hover{ background:var(--surface-2); }
+  .row .rank{ width:26px; font-family:'IBM Plex Mono',monospace; color:var(--muted); font-size:13px; flex-shrink:0; }
+  .row img.avatar{ width:34px; height:34px; border-radius:6px; image-rendering:pixelated; border:1px solid var(--line); flex-shrink:0; }
+  .row .name{ font-family:'Oswald',sans-serif; font-size:14.5px; letter-spacing:.3px; flex-shrink:0; min-width:110px; }
+  .row .pts{ font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--gold); flex-shrink:0; margin-right:6px; white-space:nowrap; }
+  .badges{ display:flex; gap:5px; flex-wrap:wrap; }
+  .badge{
+    font-family:'IBM Plex Mono',monospace; font-size:10px; text-align:center; border-radius:4px; border:1px solid var(--line);
+    padding:2px 5px; min-width:34px; line-height:1.5;
+  }
+  .badge .mod{ display:block; letter-spacing:.5px; opacity:.85; }
+  .badge .val{ display:block; font-weight:600; }
+  .badge.b-gold{ color:var(--gold); border-color:#4a3c14; background:#221c0d; }
+  .badge.b-steel{ color:var(--steel); border-color:#233b47; background:#111d22; }
+  .badge.b-bone{ color:var(--bone); border-color:var(--line); background:var(--surface-2); }
+  .badge.b-muted{ color:var(--muted); border-color:var(--line); background:var(--bg); }
+  .badge.b-retired{ color:var(--muted); border-color:var(--line); background:var(--bg); opacity:.55; text-decoration:line-through; }
+
+  .empty{ text-align:center; padding:34px 10px; color:var(--muted); font-size:13.5px; }
+  .hint{ font-size:12px; color:var(--muted); margin-top:12px; line-height:1.6; }
   .hint code{ background:var(--surface-2); padding:1px 6px; border-radius:3px; }
+  .section-label{ font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin:18px 0 8px; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="bill">
-    <h1>LA <span>ARENA</span></h1>
-    <p>Tier list de PvP, testeada por gente real vía Discord.</p>
+  <div class="topbar">
+    <div class="logo">LA <span>ARENA</span></div>
+    <input class="search" id="search" type="text" placeholder="Buscar jugador...">
   </div>
   <div class="tabs" id="tabs"></div>
-  <div class="card" id="content">
-    <div class="empty">Cargando...</div>
+  <div id="podium-wrap"></div>
+  <div id="listWrap">
+    <div class="card" id="content">
+      <div class="empty">Cargando...</div>
+    </div>
   </div>
   <p class="hint">
-    ¿Querés subir de puesto? En el servidor de Discord usá <code>/unirme</code> para sumarte a una escalera,
+    ¿Querés subir de puesto? En Discord usá <code>/unirme</code> para sumarte a una escalera,
     y <code>/desafiar</code> para retar a quien está justo arriba tuyo. Si le ganás, cambian de lugar.
-    Si no acepta en 14 días, pierde el puesto igual.
+    Si no acepta en 14 días, pierde el puesto igual. Ser #1 siempre vale 100 puntos, sin importar
+    cuánta gente haya en esa escalera.
   </p>
 </div>
 
@@ -80,10 +113,9 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
   import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
 
-  // Pegá acá la config de tu proyecto de Firebase (Configuración del proyecto -> General -> Tus apps -> Config)
   const firebaseConfig = {
     apiKey: "AIzaSyD0W4R9uaMLBDGTvNv7wRY1BRQquLQ43BA",
-    authDomain: "la-arena-tierlist.web.app",
+    authDomain: "la-arena-tierlist.firebaseapp.com",
     databaseURL: "https://la-arena-tierlist-default-rtdb.firebaseio.com/",
     projectId: "la-arena-tierlist",
   };
@@ -92,36 +124,58 @@
   const db = getDatabase(app);
 
   const MODALITIES = ['Crystal','Pot','UHC','Sword','Axe','Mazo','SMP'];
+  const MOD_SHORT = { Crystal:'CRY', Pot:'POT', UHC:'UHC', Sword:'SWD', Axe:'AXE', Mazo:'MZO', SMP:'SMP' };
   const TABS = ['OVERALL', ...MODALITIES];
   let activeTab = 'OVERALL';
+  let searchTerm = '';
   let players = {};
   let ladders = {};
-  let retired = {}; // retired[modality][playerId] = {username, points, retiredAt, ...}
-  let expandedPlayer = null;
+  let retired = {};
+
+  function customRound(x){
+    const floor = Math.floor(x);
+    const frac = x - floor;
+    if(Math.abs(frac - 0.5) < 1e-9) return floor;
+    return Math.round(x);
+  }
+  function pointsForPosition(pos, len){
+    if(len <= 0) return 0;
+    return customRound(100 * (len - pos) / len);
+  }
+  function displayName(id){
+    const p = players[id];
+    return (p && (p.mcNick || p.username)) || id;
+  }
+  function avatarUrl(id, size){
+    const p = players[id];
+    const nick = p && p.mcNick;
+    if(nick) return `https://mc-heads.net/avatar/${encodeURIComponent(nick)}/${size}`;
+    return `https://mc-heads.net/avatar/MHF_Steve/${size}`;
+  }
+  function bucketClass(pts){
+    if(pts >= 85) return 'b-gold';
+    if(pts >= 60) return 'b-steel';
+    if(pts >= 35) return 'b-bone';
+    return 'b-muted';
+  }
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
 
   function renderTabs(){
     document.getElementById('tabs').innerHTML = TABS.map(m =>
       `<div class="tab ${activeTab===m?'active':''}" data-mod="${m}">${m}</div>`
     ).join('');
     document.querySelectorAll('.tab').forEach(el => {
-      el.addEventListener('click', () => { activeTab = el.dataset.mod; expandedPlayer = null; renderTabs(); renderContent(); });
+      el.addEventListener('click', () => { activeTab = el.dataset.mod; renderTabs(); renderAll(); });
     });
-  }
-
-  // Helper para asegurarnos de que el ladder siempre sea un Array limpio
-  function getLadderArray(modality) {
-    const raw = ladders[modality];
-    if (!raw) return [];
-    if (Array.isArray(raw)) return raw.filter(Boolean);
-    if (typeof raw === 'object') return Object.values(raw).filter(Boolean);
-    return [];
   }
 
   function playerModalityBreakdown(id){
     return MODALITIES.map(m => {
-      const ladder = getLadderArray(m);
+      const ladder = ladders[m] || [];
       const pos = ladder.indexOf(id);
-      if(pos !== -1) return { modality: m, points: ladder.length - pos, isRetired: false, extra: `#${pos+1} de ${ladder.length}` };
+      if(pos !== -1) return { modality: m, points: pointsForPosition(pos, ladder.length), isRetired: false, extra: `#${pos+1} de ${ladder.length}` };
       const r = retired[m] && retired[m][id];
       if(r) return { modality: m, points: r.points, isRetired: true, extra: 'retirado/a' };
       return null;
@@ -131,109 +185,130 @@
   function computeOverall(){
     const totals = {};
     MODALITIES.forEach(m => {
-      const ladder = getLadderArray(m);
-      ladder.forEach((id, i) => { totals[id] = (totals[id] || 0) + (ladder.length - i); });
+      const ladder = ladders[m] || [];
+      ladder.forEach((id, i) => { totals[id] = (totals[id] || 0) + pointsForPosition(i, ladder.length); });
       const r = retired[m] || {};
       Object.entries(r).forEach(([id, data]) => { totals[id] = (totals[id] || 0) + data.points; });
     });
     return Object.entries(totals).sort((a, b) => b[1] - a[1]);
   }
-  
-  function renderContent(){
+
+  function renderBadges(id){
+    const breakdown = playerModalityBreakdown(id);
+    if(!breakdown.length) return '<span class="muted" style="font-size:11.5px;">sin modalidades</span>';
+    return `<div class="badges">${breakdown.map(b => `
+      <div class="badge ${b.isRetired ? 'b-retired' : bucketClass(b.points)}" title="${escapeHtml(b.extra)}">
+        <span class="mod">${MOD_SHORT[b.modality] || b.modality.slice(0,3).toUpperCase()}</span>
+        <span class="val">${b.isRetired ? 'RET' : b.points}</span>
+      </div>
+    `).join('')}</div>`;
+  }
+
+  function renderPodium(rows){
+    const wrap = document.getElementById('podium-wrap');
+    if(activeTab !== 'OVERALL' || !rows.length || searchTerm){ wrap.innerHTML = ''; return; }
+    const top3 = rows.slice(0,3);
+    const order = ['p2','p1','p3'];
+    wrap.innerHTML = `<div class="podium">${top3.map(([id,pts],i) => `
+      <div class="podium-card ${order[i]||''}">
+        <img src="${avatarUrl(id,64)}" alt="">
+        <div class="podium-rank">#${i+1}</div>
+        <div class="podium-name">${escapeHtml(displayName(id))}</div>
+        <div class="podium-pts">${pts} pts</div>
+      </div>
+    `).join('')}</div>`;
+  }
+
+  function renderAll(){
+    const listWrap = document.getElementById('listWrap');
+    listWrap.innerHTML = '<div class="card" id="content"></div>';
     const el = document.getElementById('content');
 
     if(activeTab === 'OVERALL'){
-      const rows = computeOverall();
+      let rows = computeOverall();
+      renderPodium(rows);
+      if(searchTerm){
+        rows = rows.filter(([id]) => displayName(id).toLowerCase().includes(searchTerm));
+      }
       if(!rows.length){
-        el.innerHTML = `<div class="empty">Todavía no hay puntos. Sumate a alguna escalera con /unirme en Discord.</div>`;
+        el.innerHTML = `<div class="empty">${searchTerm ? 'Nadie coincide con esa búsqueda.' : 'Todavía no hay puntos. Sumate a alguna escalera con /unirme en Discord.'}</div>`;
         return;
       }
-      el.innerHTML = `
-        <table>
-          <thead><tr><th></th><th>Jugador</th><th class="num">Puntos</th></tr></thead>
-          <tbody>
-            ${rows.map(([id, pts], i) => {
-              const detail = expandedPlayer === id ? `
-                <tr class="profile-detail"><td colspan="3">
-                  <table>
-                    <thead><tr><th>Modalidad</th><th class="num">Puntos</th><th>Estado</th></tr></thead>
-                    <tbody>
-                      ${playerModalityBreakdown(id).map(b => `
-                        <tr class="${b.isRetired ? 'retired' : ''}">
-                          <td>${escapeHtml(b.modality)}</td>
-                          <td class="num">${b.points}</td>
-                          <td class="muted">${escapeHtml(b.extra)}</td>
-                        </tr>
-                      `).join('')}
-                    </tbody>
-                  </table>
-                </td></tr>
-              ` : '';
-              return `<tr class="profile-row" data-player="${id}">
-                <td class="rank">#${i+1}</td>
-                <td>${escapeHtml((players[id] && players[id].username) || id)}</td>
-                <td class="num">${pts}</td>
-              </tr>${detail}`;
-            }).join('')}
-          </tbody>
-        </table>
-      `;
-      document.querySelectorAll('.profile-row').forEach(row => {
-        row.addEventListener('click', () => {
-          const id = row.dataset.player;
-          expandedPlayer = expandedPlayer === id ? null : id;
-          renderContent();
-        });
-      });
+      const fullList = computeOverall();
+      const listRows = searchTerm ? rows : rows.slice(3);
+      if(!listRows.length){
+        el.innerHTML = `<div class="empty">Eso es todo — solo hay top 3 por ahora.</div>`;
+        return;
+      }
+      el.innerHTML = listRows.map(([id, pts]) => {
+        const realRank = fullList.findIndex(r => r[0] === id) + 1;
+        return `
+          <div class="row">
+            <div class="rank">#${realRank}</div>
+            <img class="avatar" src="${avatarUrl(id,40)}" alt="">
+            <div class="name">${escapeHtml(displayName(id))}</div>
+            <div class="pts">${pts} pts</div>
+            ${renderBadges(id)}
+          </div>
+        `;
+      }).join('');
       return;
     }
 
-    const ladder = getLadderArray(activeTab);
+    document.getElementById('podium-wrap').innerHTML = '';
+    const ladder = ladders[activeTab] || [];
     const retiredHere = retired[activeTab] || {};
-    const retiredList = Object.values(retiredHere);
-    let html = '';
-    if(!ladder.length){
-      html += `<div class="empty">Todavía nadie se sumó a la escalera de ${activeTab}. Usá /unirme en Discord.</div>`;
+    const retiredList = Object.entries(retiredHere);
+    let filteredLadder = ladder;
+    if(searchTerm) filteredLadder = ladder.filter(id => displayName(id).toLowerCase().includes(searchTerm));
+
+    if(!filteredLadder.length){
+      el.innerHTML = `<div class="empty">${searchTerm ? 'Nadie coincide con esa búsqueda.' : `Todavía nadie se sumó a la escalera de ${activeTab}. Usá /unirme en Discord.`}</div>`;
     } else {
-      html += `
-        <table>
-          <thead><tr><th></th><th>Jugador</th></tr></thead>
-          <tbody>
-            ${ladder.map((id, i) => `<tr>
-              <td class="rank">#${i+1}</td>
-              <td>${escapeHtml((players[id] && players[id].username) || id)}</td>
-            </tr>`).join('')}
-          </tbody>
-        </table>
-      `;
+      el.innerHTML = filteredLadder.map(id => {
+        const realPos = ladder.indexOf(id);
+        const pts = pointsForPosition(realPos, ladder.length);
+        return `
+          <div class="row">
+            <div class="rank">#${realPos+1}</div>
+            <img class="avatar" src="${avatarUrl(id,40)}" alt="">
+            <div class="name">${escapeHtml(displayName(id))}</div>
+            <div class="pts">${pts} pts</div>
+          </div>
+        `;
+      }).join('');
     }
-    if(retiredList.length){
-      html += `
-        <p class="muted" style="margin:16px 0 6px; text-transform:uppercase; letter-spacing:1px; font-size:11.5px;">🏅 Retirados de esta modalidad</p>
-        <table>
-          <tbody>
-            ${retiredList.map(r => `<tr class="retired">
-              <td>${escapeHtml(r.username)}</td>
-              <td class="num">${r.points} pts</td>
-            </tr>`).join('')}
-          </tbody>
-        </table>
+
+    if(retiredList.length && !searchTerm){
+      const retiredCard = document.createElement('div');
+      retiredCard.innerHTML = `
+        <p class="section-label">🏅 Retirados de esta modalidad</p>
+        <div class="card">
+          ${retiredList.map(([id, r]) => `
+            <div class="row">
+              <img class="avatar" src="${avatarUrl(id,40)}" alt="">
+              <div class="name">${escapeHtml(r.username)}</div>
+              <div class="pts">${r.points} pts</div>
+            </div>
+          `).join('')}
+        </div>
       `;
+      listWrap.appendChild(retiredCard);
     }
-    el.innerHTML = html;
   }
 
-  function escapeHtml(s){
-    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  }
+  document.getElementById('search').addEventListener('input', (e) => {
+    searchTerm = e.target.value.trim().toLowerCase();
+    renderAll();
+  });
 
   renderTabs();
-  onValue(ref(db, 'players'), (snap) => { players = snap.val() || {}; renderContent(); });
-  onValue(ref(db, 'ladders'), (snap) => { ladders = snap.val() || {}; renderContent(); }, (err) => {
+  onValue(ref(db, 'players'), (snap) => { players = snap.val() || {}; renderAll(); });
+  onValue(ref(db, 'ladders'), (snap) => { ladders = snap.val() || {}; renderAll(); }, (err) => {
     document.getElementById('content').innerHTML = `<div class="empty">No se pudo conectar a la base de datos. Revisá el firebaseConfig y las reglas de la base.</div>`;
     console.error(err);
   });
-  onValue(ref(db, 'retired'), (snap) => { retired = snap.val() || {}; renderContent(); });
+  onValue(ref(db, 'retired'), (snap) => { retired = snap.val() || {}; renderAll(); });
 </script>
 </body>
 </html>
