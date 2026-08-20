@@ -208,9 +208,9 @@
     const wrap = document.getElementById('podium-wrap');
     if(activeTab !== 'OVERALL' || !rows.length || searchTerm){ wrap.innerHTML = ''; return; }
     const top3 = rows.slice(0,3);
-    const order = ['p2','p1','p3'];
+    const posClass = ['p1','p2','p3']; // i=0 es el #1 real, i=1 el #2, i=2 el #3
     wrap.innerHTML = `<div class="podium">${top3.map(([id,pts],i) => `
-      <div class="podium-card ${order[i]||''}">
+      <div class="podium-card ${posClass[i]||''}">
         <img src="${avatarUrl(id,64)}" alt="">
         <div class="podium-rank">#${i+1}</div>
         <div class="podium-name">${escapeHtml(displayName(id))}</div>
