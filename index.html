@@ -17,24 +17,54 @@
   body{ background:var(--bg); color:var(--bone); font-family:'Inter',sans-serif; }
   .wrap{ max-width:980px; margin:0 auto; padding:24px 18px 80px; }
 
+  /* header */
   .topbar{
-    display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
-    border:1px solid var(--line); border-radius:8px; padding:14px 18px; margin-bottom:20px;
+    display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:12px;
+    border:1px solid var(--line); border-radius:8px; padding:14px 18px; margin-bottom:18px;
     background:linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%); position:relative; overflow:hidden;
   }
   .topbar::before{
     content:""; position:absolute; top:0; left:0; right:0; height:3px;
     background:repeating-linear-gradient(90deg, var(--ember) 0 14px, transparent 14px 22px);
   }
-  .logo{ font-family:'Oswald',sans-serif; font-weight:700; letter-spacing:3px; font-size:22px; text-transform:uppercase; white-space:nowrap; }
-  .logo span{ color:var(--ember); }
-  .search{
-    flex:1; min-width:160px; max-width:280px; background:var(--bg); border:1px solid var(--line); border-radius:6px;
-    padding:9px 12px; color:var(--bone); font-family:'Inter',sans-serif; font-size:13.5px;
+  .nav{ display:flex; gap:6px; flex-wrap:wrap; }
+  .nav-btn{
+    font-family:'Oswald',sans-serif; letter-spacing:1px; text-transform:uppercase; font-size:12.5px;
+    padding:8px 13px; color:var(--muted); cursor:pointer; border:1px solid transparent; border-radius:6px;
+    background:transparent; display:flex; align-items:center; gap:6px; white-space:nowrap;
   }
-  .search::placeholder{ color:var(--muted); }
+  .nav-btn:hover{ color:var(--bone); }
+  .nav-btn.active{ color:var(--gold); border-color:var(--line); background:var(--bg); }
+  .logo{ font-family:'Oswald',sans-serif; font-weight:700; letter-spacing:3px; font-size:22px; text-transform:uppercase; white-space:nowrap; text-align:center; }
+  .logo span{ color:var(--ember); }
+  .topbar-right{ display:flex; justify-content:flex-end; }
+  .nick-btn{
+    font-family:'Oswald',sans-serif; font-size:11.5px; letter-spacing:.5px; text-transform:uppercase;
+    color:var(--muted); border:1px solid var(--line); border-radius:6px; padding:8px 12px; background:var(--bg); cursor:pointer;
+  }
+  .nick-btn:hover{ color:var(--bone); border-color:var(--steel); }
 
-  .tabs{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:20px; }
+  /* panel de nick */
+  .nick-panel{
+    display:none; border:1px solid var(--line); border-radius:8px; background:var(--surface);
+    padding:16px; margin-bottom:20px;
+  }
+  .nick-panel.open{ display:block; }
+  .nick-panel label{ display:block; font-size:11.5px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin-bottom:6px; }
+  .nick-panel select, .nick-panel input{
+    width:100%; background:var(--bg); border:1px solid var(--line); color:var(--bone); border-radius:6px;
+    padding:9px 11px; font-family:'Inter',sans-serif; font-size:13.5px; margin-bottom:12px;
+  }
+  .nick-panel .row{ display:flex; gap:10px; flex-wrap:wrap; }
+  .nick-panel .row > *{ flex:1; min-width:180px; }
+  .nick-save{
+    font-family:'Oswald',sans-serif; letter-spacing:1px; text-transform:uppercase; font-size:12.5px;
+    padding:9px 16px; background:var(--ember); color:#1a0c08; border:none; border-radius:6px; cursor:pointer; font-weight:600;
+  }
+  .nick-msg{ font-size:12px; color:var(--muted); margin-top:8px; }
+
+  /* sub-tabs (modalidades, solo en la vista ranking completo) */
+  .subtabs{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
   .tab{
     font-family:'Oswald',sans-serif; letter-spacing:1px; text-transform:uppercase; font-size:12.5px;
     padding:9px 14px; color:var(--muted); cursor:pointer; border:1px solid var(--line); border-radius:6px;
@@ -42,7 +72,13 @@
   }
   .tab:hover{ color:var(--bone); border-color:var(--steel); }
   .tab.active{ color:var(--bg); background:var(--ember); border-color:var(--ember); }
+  .search{
+    width:100%; background:var(--surface); border:1px solid var(--line); border-radius:6px;
+    padding:10px 13px; color:var(--bone); font-family:'Inter',sans-serif; font-size:13.5px; margin-bottom:16px;
+  }
+  .search::placeholder{ color:var(--muted); }
 
+  /* podio */
   .podium{ display:flex; align-items:flex-end; justify-content:center; gap:14px; margin-bottom:24px; }
   .podium-card{
     border:1px solid var(--line); border-radius:8px; background:var(--surface); text-align:center;
@@ -59,10 +95,9 @@
   .podium-card.p1 .podium-rank{ color:var(--gold); font-size:30px; }
   .podium-pts{ font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); margin-top:2px; }
 
+  /* filas */
   .card{ border:1px solid var(--line); background:var(--surface); border-radius:8px; overflow:hidden; margin-bottom:14px; }
-  .row{
-    display:flex; align-items:center; gap:12px; padding:10px 14px; border-bottom:1px solid var(--line);
-  }
+  .row{ display:flex; align-items:center; gap:12px; padding:10px 14px; border-bottom:1px solid var(--line); }
   .row:last-child{ border-bottom:none; }
   .row:hover{ background:var(--surface-2); }
   .row .rank{ width:26px; font-family:'IBM Plex Mono',monospace; color:var(--muted); font-size:13px; flex-shrink:0; }
@@ -82,6 +117,13 @@
   .badge.b-muted{ color:var(--muted); border-color:var(--line); background:var(--bg); }
   .badge.b-retired{ color:var(--muted); border-color:var(--line); background:var(--bg); opacity:.55; text-decoration:line-through; }
 
+  .full-btn-wrap{ text-align:center; margin-top:6px; }
+  .full-btn{
+    font-family:'Oswald',sans-serif; letter-spacing:1px; text-transform:uppercase; font-size:12.5px;
+    color:var(--muted); background:none; border:none; cursor:pointer; padding:10px;
+  }
+  .full-btn:hover{ color:var(--gold); }
+
   .empty{ text-align:center; padding:34px 10px; color:var(--muted); font-size:13.5px; }
   .hint{ font-size:12px; color:var(--muted); margin-top:12px; line-height:1.6; }
   .hint code{ background:var(--surface-2); padding:1px 6px; border-radius:3px; }
@@ -91,27 +133,38 @@
 <body>
 <div class="wrap">
   <div class="topbar">
+    <div class="nav" id="nav"></div>
     <div class="logo">LA <span>ARENA</span></div>
-    <input class="search" id="search" type="text" placeholder="Buscar jugador...">
+    <div class="topbar-right"><button class="nick-btn" id="nickToggle">✏️ Mi nick de Minecraft</button></div>
   </div>
-  <div class="tabs" id="tabs"></div>
+
+  <div class="nick-panel" id="nickPanel">
+    <div class="row">
+      <div>
+        <label>Elegí tu nombre en la lista</label>
+        <select id="nickPlayerSelect"><option value="">Cargando jugadores...</option></select>
+      </div>
+      <div>
+        <label>Tu nick exacto de Minecraft</label>
+        <input type="text" id="nickInput" placeholder="Ej: SpreenDMC" maxlength="16">
+      </div>
+    </div>
+    <button class="nick-save" id="nickSave">Guardar</button>
+    <p class="nick-msg" id="nickMsg">Esto es lo mismo que hace <code>/nick</code> en Discord, pero desde acá. Se ve reflejado para todos apenas lo guardás.</p>
+  </div>
+
+  <div id="subtabs-wrap"></div>
+  <div id="search-wrap"></div>
   <div id="podium-wrap"></div>
   <div id="listWrap">
-    <div class="card" id="content">
-      <div class="empty">Cargando...</div>
-    </div>
+    <div class="card" id="content"><div class="empty">Cargando...</div></div>
   </div>
-  <p class="hint">
-    ¿Querés subir de puesto? En Discord usá <code>/unirme</code> para sumarte a una escalera,
-    y <code>/desafiar</code> para retar a quien está justo arriba tuyo. Si le ganás, cambian de lugar.
-    Si no acepta en 14 días, pierde el puesto igual. Ser #1 siempre vale 100 puntos, sin importar
-    cuánta gente haya en esa escalera.
-  </p>
+  <div id="footer-wrap"></div>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+  import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyD0W4R9uaMLBDGTvNv7wRY1BRQquLQ43BA",
@@ -125,13 +178,16 @@
 
   const MODALITIES = ['Crystal','Pot','UHC','Sword','Axe','Mazo','SMP'];
   const MOD_SHORT = { Crystal:'CRY', Pot:'POT', UHC:'UHC', Sword:'SWD', Axe:'AXE', Mazo:'MZO', SMP:'SMP' };
-  const TABS = ['OVERALL', ...MODALITIES];
-  let activeTab = 'OVERALL';
+  const SUBTABS = ['OVERALL', ...MODALITIES];
+
+  let view = 'home';        // 'home' | 'board'
+  let activeSubtab = 'OVERALL';
   let searchTerm = '';
   let players = {};
   let ladders = {};
   let retired = {};
 
+  // ---------- utilidades ----------
   function customRound(x){
     const floor = Math.floor(x);
     const frac = x - floor;
@@ -161,16 +217,6 @@
   function escapeHtml(s){
     return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
-
-  function renderTabs(){
-    document.getElementById('tabs').innerHTML = TABS.map(m =>
-      `<div class="tab ${activeTab===m?'active':''}" data-mod="${m}">${m}</div>`
-    ).join('');
-    document.querySelectorAll('.tab').forEach(el => {
-      el.addEventListener('click', () => { activeTab = el.dataset.mod; renderTabs(); renderAll(); });
-    });
-  }
-
   function playerModalityBreakdown(id){
     return MODALITIES.map(m => {
       const ladder = ladders[m] || [];
@@ -181,7 +227,6 @@
       return null;
     }).filter(Boolean);
   }
-
   function computeOverall(){
     const totals = {};
     MODALITIES.forEach(m => {
@@ -192,7 +237,6 @@
     });
     return Object.entries(totals).sort((a, b) => b[1] - a[1]);
   }
-
   function renderBadges(id){
     const breakdown = playerModalityBreakdown(id);
     if(!breakdown.length) return '<span class="muted" style="font-size:11.5px;">sin modalidades</span>';
@@ -203,13 +247,10 @@
       </div>
     `).join('')}</div>`;
   }
-
-  function renderPodium(rows){
-    const wrap = document.getElementById('podium-wrap');
-    if(activeTab !== 'OVERALL' || !rows.length || searchTerm){ wrap.innerHTML = ''; return; }
+  function podiumHtml(rows){
     const top3 = rows.slice(0,3);
-    const posClass = ['p1','p2','p3']; // i=0 es el #1 real, i=1 el #2, i=2 el #3
-    wrap.innerHTML = `<div class="podium">${top3.map(([id,pts],i) => `
+    const posClass = ['p1','p2','p3'];
+    return `<div class="podium">${top3.map(([id,pts],i) => `
       <div class="podium-card ${posClass[i]||''}">
         <img src="${avatarUrl(id,64)}" alt="">
         <div class="podium-rank">#${i+1}</div>
@@ -218,64 +259,101 @@
       </div>
     `).join('')}</div>`;
   }
+  function rowHtml(id, rank, pts, withBadges){
+    return `
+      <div class="row">
+        <div class="rank">#${rank}</div>
+        <img class="avatar" src="${avatarUrl(id,34)}" alt="">
+        <div class="name">${escapeHtml(displayName(id))}</div>
+        <div class="pts">${pts} pts</div>
+        ${withBadges ? renderBadges(id) : ''}
+      </div>
+    `;
+  }
 
-  function renderAll(){
-    const listWrap = document.getElementById('listWrap');
-    listWrap.innerHTML = '<div class="card" id="content"></div>';
+  // ---------- nav ----------
+  function renderNav(){
+    document.getElementById('nav').innerHTML = `
+      <div class="nav-btn ${view==='home'?'active':''}" data-view="home">🏠 Inicio</div>
+      <div class="nav-btn ${view==='board'?'active':''}" data-view="board">👑 Ranking completo</div>
+    `;
+    document.querySelectorAll('.nav-btn').forEach(el => {
+      el.addEventListener('click', () => { view = el.dataset.view; searchTerm = ''; render(); });
+    });
+  }
+
+  // ---------- vista Inicio ----------
+  function renderHome(){
+    document.getElementById('subtabs-wrap').innerHTML = '';
+    document.getElementById('search-wrap').innerHTML = '';
+    const rows = computeOverall();
+    const podiumWrap = document.getElementById('podium-wrap');
+    const el = document.getElementById('content');
+    const footer = document.getElementById('footer-wrap');
+
+    if(!rows.length){
+      podiumWrap.innerHTML = '';
+      el.innerHTML = `<div class="empty">Todavía no hay puntos. Sumate a alguna escalera con /unirme en Discord.</div>`;
+      footer.innerHTML = '';
+      return;
+    }
+    podiumWrap.innerHTML = podiumHtml(rows);
+    const nextRows = rows.slice(3, 5);
+    el.innerHTML = nextRows.length
+      ? nextRows.map(([id, pts], i) => rowHtml(id, i + 4, pts, false)).join('')
+      : '';
+    if(!nextRows.length) document.getElementById('listWrap').style.display = 'none';
+    else document.getElementById('listWrap').style.display = '';
+
+    footer.innerHTML = `<div class="full-btn-wrap"><button class="full-btn" id="fullBtn">Ver ranking completo →</button></div>`;
+    document.getElementById('fullBtn').addEventListener('click', () => { view = 'board'; render(); });
+  }
+
+  // ---------- vista Ranking completo ----------
+  function renderBoard(){
+    document.getElementById('listWrap').style.display = '';
+    document.getElementById('podium-wrap').innerHTML = '';
+    document.getElementById('footer-wrap').innerHTML = '';
+
+    document.getElementById('subtabs-wrap').innerHTML = `
+      <div class="subtabs">${SUBTABS.map(m => `<div class="tab ${activeSubtab===m?'active':''}" data-mod="${m}">${m}</div>`).join('')}</div>
+    `;
+    document.querySelectorAll('.subtabs .tab').forEach(el => {
+      el.addEventListener('click', () => { activeSubtab = el.dataset.mod; render(); });
+    });
+
+    document.getElementById('search-wrap').innerHTML = `<input class="search" id="search" type="text" placeholder="Buscar jugador..." value="${escapeHtml(searchTerm)}">`;
+    document.getElementById('search').addEventListener('input', (e) => { searchTerm = e.target.value.trim().toLowerCase(); render(); });
+
     const el = document.getElementById('content');
 
-    if(activeTab === 'OVERALL'){
+    if(activeSubtab === 'OVERALL'){
       let rows = computeOverall();
-      renderPodium(rows);
-      if(searchTerm){
-        rows = rows.filter(([id]) => displayName(id).toLowerCase().includes(searchTerm));
-      }
+      const fullList = rows;
+      if(searchTerm) rows = rows.filter(([id]) => displayName(id).toLowerCase().includes(searchTerm));
       if(!rows.length){
         el.innerHTML = `<div class="empty">${searchTerm ? 'Nadie coincide con esa búsqueda.' : 'Todavía no hay puntos. Sumate a alguna escalera con /unirme en Discord.'}</div>`;
         return;
       }
-      const fullList = computeOverall();
-      const listRows = searchTerm ? rows : rows.slice(3);
-      if(!listRows.length){
-        el.innerHTML = `<div class="empty">Eso es todo — solo hay top 3 por ahora.</div>`;
-        return;
-      }
-      el.innerHTML = listRows.map(([id, pts]) => {
+      el.innerHTML = rows.map(([id, pts]) => {
         const realRank = fullList.findIndex(r => r[0] === id) + 1;
-        return `
-          <div class="row">
-            <div class="rank">#${realRank}</div>
-            <img class="avatar" src="${avatarUrl(id,40)}" alt="">
-            <div class="name">${escapeHtml(displayName(id))}</div>
-            <div class="pts">${pts} pts</div>
-            ${renderBadges(id)}
-          </div>
-        `;
+        return rowHtml(id, realRank, pts, true);
       }).join('');
       return;
     }
 
-    document.getElementById('podium-wrap').innerHTML = '';
-    const ladder = ladders[activeTab] || [];
-    const retiredHere = retired[activeTab] || {};
+    const ladder = ladders[activeSubtab] || [];
+    const retiredHere = retired[activeSubtab] || {};
     const retiredList = Object.entries(retiredHere);
     let filteredLadder = ladder;
     if(searchTerm) filteredLadder = ladder.filter(id => displayName(id).toLowerCase().includes(searchTerm));
 
     if(!filteredLadder.length){
-      el.innerHTML = `<div class="empty">${searchTerm ? 'Nadie coincide con esa búsqueda.' : `Todavía nadie se sumó a la escalera de ${activeTab}. Usá /unirme en Discord.`}</div>`;
+      el.innerHTML = `<div class="empty">${searchTerm ? 'Nadie coincide con esa búsqueda.' : `Todavía nadie se sumó a la escalera de ${activeSubtab}. Usá /unirme en Discord.`}</div>`;
     } else {
       el.innerHTML = filteredLadder.map(id => {
         const realPos = ladder.indexOf(id);
-        const pts = pointsForPosition(realPos, ladder.length);
-        return `
-          <div class="row">
-            <div class="rank">#${realPos+1}</div>
-            <img class="avatar" src="${avatarUrl(id,40)}" alt="">
-            <div class="name">${escapeHtml(displayName(id))}</div>
-            <div class="pts">${pts} pts</div>
-          </div>
-        `;
+        return rowHtml(id, realPos + 1, pointsForPosition(realPos, ladder.length), false);
       }).join('');
     }
 
@@ -286,29 +364,58 @@
         <div class="card">
           ${retiredList.map(([id, r]) => `
             <div class="row">
-              <img class="avatar" src="${avatarUrl(id,40)}" alt="">
+              <img class="avatar" src="${avatarUrl(id,34)}" alt="">
               <div class="name">${escapeHtml(r.username)}</div>
               <div class="pts">${r.points} pts</div>
             </div>
           `).join('')}
         </div>
       `;
-      listWrap.appendChild(retiredCard);
+      document.getElementById('listWrap').appendChild(retiredCard);
     }
   }
 
-  document.getElementById('search').addEventListener('input', (e) => {
-    searchTerm = e.target.value.trim().toLowerCase();
-    renderAll();
+  function render(){
+    document.getElementById('listWrap').innerHTML = '<div class="card" id="content"></div>';
+    renderNav();
+    if(view === 'home') renderHome();
+    else renderBoard();
+  }
+
+  // ---------- panel para poner el nick de Minecraft ----------
+  document.getElementById('nickToggle').addEventListener('click', () => {
+    document.getElementById('nickPanel').classList.toggle('open');
+    fillNickSelect();
+  });
+  function fillNickSelect(){
+    const sel = document.getElementById('nickPlayerSelect');
+    const ids = Object.keys(players);
+    if(!ids.length){ sel.innerHTML = '<option value="">Todavía no hay jugadores</option>'; return; }
+    sel.innerHTML = '<option value="">Elegí tu nombre...</option>' + ids
+      .sort((a,b) => displayName(a).localeCompare(displayName(b)))
+      .map(id => `<option value="${id}">${escapeHtml(displayName(id))}</option>`).join('');
+  }
+  document.getElementById('nickSave').addEventListener('click', async () => {
+    const id = document.getElementById('nickPlayerSelect').value;
+    const nick = document.getElementById('nickInput').value.trim();
+    const msg = document.getElementById('nickMsg');
+    if(!id){ msg.textContent = 'Elegí primero tu nombre en la lista.'; return; }
+    if(!/^[A-Za-z0-9_]{2,16}$/.test(nick)){ msg.textContent = 'Ese nick no parece válido (2 a 16 caracteres, letras/números/guion bajo).'; return; }
+    try{
+      await set(ref(db, 'players/' + id + '/mcNick'), nick);
+      msg.textContent = `Listo, guardado como ${nick}. Ya se debería ver tu skin.`;
+    }catch(e){
+      msg.textContent = 'No se pudo guardar. Revisá las reglas de la base de datos.';
+      console.error(e);
+    }
   });
 
-  renderTabs();
-  onValue(ref(db, 'players'), (snap) => { players = snap.val() || {}; renderAll(); });
-  onValue(ref(db, 'ladders'), (snap) => { ladders = snap.val() || {}; renderAll(); }, (err) => {
+  onValue(ref(db, 'players'), (snap) => { players = snap.val() || {}; render(); });
+  onValue(ref(db, 'ladders'), (snap) => { ladders = snap.val() || {}; render(); }, (err) => {
     document.getElementById('content').innerHTML = `<div class="empty">No se pudo conectar a la base de datos. Revisá el firebaseConfig y las reglas de la base.</div>`;
     console.error(err);
   });
-  onValue(ref(db, 'retired'), (snap) => { retired = snap.val() || {}; renderAll(); });
+  onValue(ref(db, 'retired'), (snap) => { retired = snap.val() || {}; render(); });
 </script>
 </body>
 </html>
