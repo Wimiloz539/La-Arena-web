@@ -17,10 +17,9 @@
   body{ background:var(--bg); color:var(--bone); font-family:'Inter',sans-serif; }
   .wrap{ max-width:980px; margin:0 auto; padding:24px 18px 80px; }
 
-  /* header */
   .topbar{
     display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:12px;
-    border:1px solid var(--line); border-radius:8px; padding:14px 18px; margin-bottom:18px;
+    border:1px solid var(--line); border-radius:8px; padding:14px 18px; margin-bottom:20px;
     background:linear-gradient(180deg, var(--surface) 0%, var(--surface-2) 100%); position:relative; overflow:hidden;
   }
   .topbar::before{
@@ -37,33 +36,8 @@
   .nav-btn.active{ color:var(--gold); border-color:var(--line); background:var(--bg); }
   .logo{ font-family:'Oswald',sans-serif; font-weight:700; letter-spacing:3px; font-size:22px; text-transform:uppercase; white-space:nowrap; text-align:center; }
   .logo span{ color:var(--ember); }
-  .topbar-right{ display:flex; justify-content:flex-end; }
-  .nick-btn{
-    font-family:'Oswald',sans-serif; font-size:11.5px; letter-spacing:.5px; text-transform:uppercase;
-    color:var(--muted); border:1px solid var(--line); border-radius:6px; padding:8px 12px; background:var(--bg); cursor:pointer;
-  }
-  .nick-btn:hover{ color:var(--bone); border-color:var(--steel); }
+  .topbar-right{ }
 
-  /* panel de nick */
-  .nick-panel{
-    display:none; border:1px solid var(--line); border-radius:8px; background:var(--surface);
-    padding:16px; margin-bottom:20px;
-  }
-  .nick-panel.open{ display:block; }
-  .nick-panel label{ display:block; font-size:11.5px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin-bottom:6px; }
-  .nick-panel select, .nick-panel input{
-    width:100%; background:var(--bg); border:1px solid var(--line); color:var(--bone); border-radius:6px;
-    padding:9px 11px; font-family:'Inter',sans-serif; font-size:13.5px; margin-bottom:12px;
-  }
-  .nick-panel .row{ display:flex; gap:10px; flex-wrap:wrap; }
-  .nick-panel .row > *{ flex:1; min-width:180px; }
-  .nick-save{
-    font-family:'Oswald',sans-serif; letter-spacing:1px; text-transform:uppercase; font-size:12.5px;
-    padding:9px 16px; background:var(--ember); color:#1a0c08; border:none; border-radius:6px; cursor:pointer; font-weight:600;
-  }
-  .nick-msg{ font-size:12px; color:var(--muted); margin-top:8px; }
-
-  /* sub-tabs (modalidades, solo en la vista ranking completo) */
   .subtabs{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
   .tab{
     font-family:'Oswald',sans-serif; letter-spacing:1px; text-transform:uppercase; font-size:12.5px;
@@ -78,7 +52,6 @@
   }
   .search::placeholder{ color:var(--muted); }
 
-  /* podio */
   .podium{ display:flex; align-items:flex-end; justify-content:center; gap:14px; margin-bottom:24px; }
   .podium-card{
     border:1px solid var(--line); border-radius:8px; background:var(--surface); text-align:center;
@@ -95,7 +68,6 @@
   .podium-card.p1 .podium-rank{ color:var(--gold); font-size:30px; }
   .podium-pts{ font-family:'IBM Plex Mono',monospace; font-size:11.5px; color:var(--muted); margin-top:2px; }
 
-  /* filas */
   .card{ border:1px solid var(--line); background:var(--surface); border-radius:8px; overflow:hidden; margin-bottom:14px; }
   .row{ display:flex; align-items:center; gap:12px; padding:10px 14px; border-bottom:1px solid var(--line); }
   .row:last-child{ border-bottom:none; }
@@ -135,22 +107,7 @@
   <div class="topbar">
     <div class="nav" id="nav"></div>
     <div class="logo">LA <span>ARENA</span></div>
-    <div class="topbar-right"><button class="nick-btn" id="nickToggle">✏️ Mi nick de Minecraft</button></div>
-  </div>
-
-  <div class="nick-panel" id="nickPanel">
-    <div class="row">
-      <div>
-        <label>Elegí tu nombre en la lista</label>
-        <select id="nickPlayerSelect"><option value="">Cargando jugadores...</option></select>
-      </div>
-      <div>
-        <label>Tu nick exacto de Minecraft</label>
-        <input type="text" id="nickInput" placeholder="Ej: Wimiloz539" maxlength="16">
-      </div>
-    </div>
-    <button class="nick-save" id="nickSave">Guardar</button>
-    <p class="nick-msg" id="nickMsg">Esto es lo mismo que hace <code>/nick</code> en Discord, pero desde acá. Se ve reflejado para todos apenas lo guardás.</p>
+    <div class="topbar-right"></div>
   </div>
 
   <div id="subtabs-wrap"></div>
@@ -160,11 +117,19 @@
     <div class="card" id="content"><div class="empty">Cargando...</div></div>
   </div>
   <div id="footer-wrap"></div>
+
+  <p class="hint">
+    ¿Querés subir de puesto? En Discord usá <code>/unirme</code> para sumarte a una escalera,
+    y <code>/desafiar</code> para retar a quien está justo arriba tuyo. Si le ganás, cambian de lugar.
+    Si no acepta en 14 días, pierde el puesto igual. Ser #1 siempre vale 100 puntos, sin importar
+    cuánta gente haya en esa escalera. Tu nick de Minecraft se configura con <code>/nick</code> en Discord,
+    no desde acá.
+  </p>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-  import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyD0W4R9uaMLBDGTvNv7wRY1BRQquLQ43BA",
@@ -187,7 +152,6 @@
   let ladders = {};
   let retired = {};
 
-  // ---------- utilidades ----------
   function customRound(x){
     const floor = Math.floor(x);
     const frac = x - floor;
@@ -271,7 +235,6 @@
     `;
   }
 
-  // ---------- nav ----------
   function renderNav(){
     document.getElementById('nav').innerHTML = `
       <div class="nav-btn ${view==='home'?'active':''}" data-view="home">🏠 Inicio</div>
@@ -282,7 +245,6 @@
     });
   }
 
-  // ---------- vista Inicio ----------
   function renderHome(){
     document.getElementById('subtabs-wrap').innerHTML = '';
     document.getElementById('search-wrap').innerHTML = '';
@@ -302,14 +264,12 @@
     el.innerHTML = nextRows.length
       ? nextRows.map(([id, pts], i) => rowHtml(id, i + 4, pts, false)).join('')
       : '';
-    if(!nextRows.length) document.getElementById('listWrap').style.display = 'none';
-    else document.getElementById('listWrap').style.display = '';
+    document.getElementById('listWrap').style.display = nextRows.length ? '' : 'none';
 
     footer.innerHTML = `<div class="full-btn-wrap"><button class="full-btn" id="fullBtn">Ver ranking completo →</button></div>`;
     document.getElementById('fullBtn').addEventListener('click', () => { view = 'board'; render(); });
   }
 
-  // ---------- vista Ranking completo ----------
   function renderBoard(){
     document.getElementById('listWrap').style.display = '';
     document.getElementById('podium-wrap').innerHTML = '';
@@ -381,44 +341,6 @@
     if(view === 'home') renderHome();
     else renderBoard();
   }
-
-  // ---------- panel para poner el nick de Minecraft ----------
-  document.getElementById('nickToggle').addEventListener('click', () => {
-    document.getElementById('nickPanel').classList.toggle('open');
-    fillNickSelect();
-  });
-  function fillNickSelect(){
-    const sel = document.getElementById('nickPlayerSelect');
-    const ids = Object.keys(players);
-    if(!ids.length){ sel.innerHTML = '<option value="">Todavía no hay jugadores</option>'; return; }
-    sel.innerHTML = '<option value="">Elegí tu nombre...</option>' + ids
-      .sort((a,b) => displayName(a).localeCompare(displayName(b)))
-      .map(id => `<option value="${id}">${escapeHtml(displayName(id))}</option>`).join('');
-  }
-  document.getElementById('nickSave').addEventListener('click', async () => {
-    const id = document.getElementById('nickPlayerSelect').value;
-    const nick = document.getElementById('nickInput').value.trim();
-    const msg = document.getElementById('nickMsg');
-    if(!id){ msg.textContent = 'Elegí primero tu nombre en la lista.'; return; }
-    if(!/^[A-Za-z0-9_]{2,16}$/.test(nick)){ msg.textContent = 'Ese nick no parece válido (2 a 16 caracteres, letras/números/guion bajo).'; return; }
-
-    const confirmado = confirm(
-      `¿Estás seguro que tu nick de Minecraft es "${nick}"?\n\n` +
-      `Una vez guardado NO vas a poder cambiarlo por tu cuenta — revisalo bien antes de confirmar.`
-    );
-    if(!confirmado) return;
-
-    try{
-      await set(ref(db, 'players/' + id + '/mcNick'), nick);
-      msg.textContent = `Listo, guardado como ${nick}.`;
-      document.getElementById('nickPanel').classList.remove('open');
-      document.getElementById('nickPlayerSelect').value = '';
-      document.getElementById('nickInput').value = '';
-    }catch(e){
-      msg.textContent = 'No se pudo guardar. Revisá las reglas de la base de datos.';
-      console.error(e);
-    }
-  });
 
   onValue(ref(db, 'players'), (snap) => { players = snap.val() || {}; render(); });
   onValue(ref(db, 'ladders'), (snap) => { ladders = snap.val() || {}; render(); }, (err) => {
